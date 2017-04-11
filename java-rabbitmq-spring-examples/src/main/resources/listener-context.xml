@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+  xsi:schemaLocation="http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+  <context:property-placeholder />
+
+  <rabbit:connection-factory id="connectionFactory"
+    host="${RABBITMQ_HOST:localhost}" 
+    username="${RABBITMQ_USER:examples}"
+    password="${RABBITMQ_PASSWORD:examples}" 
+    virtual-host="${RABBITMQ_VIRTUALHOST:batch}" />
+
+  <rabbit:admin id="rabbitAdmin" connection-factory="connectionFactory" />
+
+  <rabbit:queue id="taskQueue" name="${RABBITMQ_TASK_QUEUE:taskQueue}">
+    <rabbit:queue-arguments>
+      <entry key="x-max-priority" value="2" value-type="java.lang.Integer"/>
+    </rabbit:queue-arguments>
+  </rabbit:queue>
+
+  <rabbit:listener-container
+    mismatched-queues-fatal="true" 
+    acknowledge="auto" 
+    prefetch="1"
+    concurrency="8"
+    connection-factory="connectionFactory">
+    <rabbit:listener id="container" ref="taskDispatcher"
+      queues="taskQueue" />
+  </rabbit:listener-container>
+
+  <bean id="taskDispatcher"
+    class="com.muk.examples.messaging.rabbitmq.spring.TaskDispatcher" />
+
+</beans>

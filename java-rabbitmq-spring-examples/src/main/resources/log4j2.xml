@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" strict="true" name="java-rabbitmq-examples">
+  <Properties>
+    <Property name="filename">target/rabbitmq-spring-examples.log</Property>
+  </Properties>
+
+  <Appenders>
+    <Appender type="Console" name="STDOUT">
+      <Layout type="PatternLayout">
+        <Pattern>%d %p %c{1} [%t] %m%n%ex{full}</Pattern>
+      </Layout>
+    </Appender>
+    <Appender type="File" name="File" fileName="${filename}">
+      <Layout type="PatternLayout">
+        <Pattern>%d %p %c{1} [%t] %m%n%ex{full}</Pattern>
+      </Layout>
+    </Appender>
+  </Appenders>
+
+  <Loggers>
+    <Logger name="com.muk.examples.messaging" level="debug" additivity="false">
+      <AppenderRef ref="STDOUT" />
+      <AppenderRef ref="File" />
+    </Logger>
+
+    <Root level="warn">
+      <AppenderRef ref="STDOUT" />
+      <AppenderRef ref="File" />
+    </Root>
+  </Loggers>
+
+</Configuration>
